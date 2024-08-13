@@ -1,0 +1,63 @@
+<div class="py-4">
+    <h2>Administración</h2>
+    <hr class="w-50" />
+
+    <table class="table w-50 m-auto">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Foto</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Años de experiencia</th>
+                <th scope="col">Especialidad</th>
+                <th scope="col">Estado</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            {{#each skaters }}
+            <tr>
+                <th scope="row">{{id}}</th>
+                <td><img src="/img/{{foto}}" alt="{{foto}}"></td>
+                <td>{{nombre}}</td>
+                <td>{{anos_experiencia}}</td>
+                <td>{{especialidad}}</td>
+                {{#if estado }}
+                <td><input type="checkbox" checked onclick="cambiarEstado({{id}})" /></td>
+                {{else}}
+                <td><input type="checkbox" onclick="cambiarEstado({{id}})" /></td>
+                {{/if }}
+            </tr>
+            {{/each }}
+        </tbody>
+    </table>
+</div>
+
+<style>
+    table img {
+        width: 80px;
+        aspect-ratio: 3/4;
+    }
+</style>
+
+<script>
+
+    const cambiarEstado = async (id) => {
+        try {
+            const myHeaders = new Headers();
+            myHeaders.append("Authorization", `Bearer ${token}`); 
+
+            let response = await fetch("/api/v1/skaters/estado?id=" + id, {
+                method: "PUT",
+                headers: myHeaders
+            });
+            let data = await response.json();
+            alert(data.message);
+            location.reload();
+
+        } catch (error) {
+            alert("Error al intentar cambiar el estado");
+            location.reload();
+        }
+    }
+</script>

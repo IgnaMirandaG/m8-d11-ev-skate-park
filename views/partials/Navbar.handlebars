@@ -1,0 +1,73 @@
+<nav class="navbar fixed-top navbar-expand-lg bg-dark navbar-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">Skate Park</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+      <div class="navbar-nav ms-auto">
+        <a class="nav-link {{#if homeView}}active{{/if}}" href="/">Home</a>
+        <a id="linkPerfil" class="nav-link {{#if datosView}}active{{/if}}" href="/perfil" style="display:none;">Perfil</a>
+        <a id="linkLogin" class="nav-link {{#if loginView}}active{{/if}}" href="/login">Login</a>
+        <a id="linkRegistro" class="nav-link {{#if registroView}}active{{/if}}" href="/registro">Registro</a>
+        <a id="linkLogout" class="nav-link" href="" style="display:none;">Logout</a>
+
+        <a id="linkAdmin" class="nav-link" href="/admin" style="display:none;">Administración</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+
+<script>
+
+    let token = localStorage.getItem("token");
+
+
+    //links
+
+    const linkLogin = document.getElementById("linkLogin");
+    const linkRegistro = document.getElementById("linkRegistro");
+    const linkLogout = document.getElementById("linkLogout");
+    const linkPerfil = document.getElementById("linkPerfil");
+    const linkAdmin = document.getElementById("linkAdmin");
+
+
+    let usuario = JSON.parse(localStorage.getItem("usuario"));
+
+    if(token){
+        linkLogin.style.display = "none";
+        linkRegistro.style.display = "none";
+        linkLogout.style.display = "block";
+        linkPerfil.style.display="block";
+
+        if(usuario.admin){
+        linkAdmin.style.display = "block";
+        }
+    }
+
+
+    linkLogout.addEventListener("click", (event) => {
+        event.preventDefault();
+        let confirmacion = confirm("Está seguro que desea cerrar su sesión?");
+
+        if(confirmacion){
+            alert("Sesión cerrada con éxito.")
+            localStorage.clear();
+            location.href = "/";
+        }
+    });
+
+
+    //redigir a vista perfil
+     linkPerfil.addEventListener("click", (event) => {
+        event.preventDefault();
+        location.href = "/perfil?token="+token;
+    });
+
+    linkAdmin.addEventListener("click", (event) => {
+        event.preventDefault();
+        location.href = "/admin?token="+token;
+    })
+
+</script>

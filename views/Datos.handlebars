@@ -1,0 +1,141 @@
+
+  <div class="py-4">
+    <h2>Datos del perfil</h2>
+    <hr class="w-50" />
+
+    {{#if error }}
+        <div>
+          <p>{{error}}</p>
+        </div>
+    {{else}}
+      <form id="formUpdate">
+          <div class="form-group row w-50 m-auto">
+            <div class="form-group col-12 col-sm-6">
+              <label>Email</label>
+              <input class="form-control m-auto" type="email" name="email" value="{{usuario.email}}" required />
+            </div>
+            <div class="form-group col-12 col-sm-6">
+              <label>Nombre</label>
+              <input class="form-control m-auto" value="{{usuario.nombre}}" type="text" name="nombre" required/>
+            </div>
+            <div class="form-group col-12 col-sm-6">
+              <label>Password</label>
+              <input type="password" class="form-control m-auto" value="" name="password"/>
+            </div>
+            <div class="form-group col-12 col-sm-6">
+              <label>Repita la password</label>
+              <input type="password" class="form-control m-auto" value="" name="replyPassword"/>
+            </div>
+            <div class="form-group col-12 col-sm-6">
+              <label>Años de experiencia</label>
+              <input class="form-control m-auto" value="{{usuario.anos_experiencia}}" type="number" name="anos_experiencia" required min="0"/>
+            </div>
+            <div class="form-group col-12 col-sm-6">
+              <label>Especialidad</label>
+              <input class="form-control m-auto" value="{{usuario.especialidad}}" type="text" name="especialidad" required/>
+            </div>
+          </div>
+          <div class="mb-1">
+            <button class="btn btn-primary">Actualizar</button>
+          </div>
+        </form>
+        <div>
+            <button class="btn btn-danger" id="eliminarCuenta">Eliminar cuenta</button>
+        </div>
+
+    {{/if }}
+  </div>
+
+
+  <script>
+
+    const eliminarCuenta = document.getElementById("eliminarCuenta");
+
+    eliminarCuenta.addEventListener("click", async (event) => {
+      try{
+        event.preventDefault();
+
+        let confirmacion = confirm("Está seguro que desea eliminar su cuenta?");
+
+        let password = "";
+        if(confirmacion){
+          password = prompt("Introduzca su contraseña para asegurarnos que es usted!");
+        }else{
+          return true;
+        }
+
+        const raw = JSON.stringify({
+          password
+        });
+
+
+        const myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
+        myHeaders.append("Authorization", `Bearer ${token}`);
+
+        let response = await fetch("/api/v1/skaters", {
+          method: "DELETE",
+          headers: myHeaders,
+          body: raw
+        });
+
+        let data = await response.json();
+
+        alert(data.message);
+
+        if(response.status == 200){
+          localStorage.clear();
+          location.href = "/"
+        }
+
+      }catch(error){
+        console.log(error);
+        alert("Error al intentar elimnar cuenta del usuario.");
+      }
+    });
+
+
+    const formUpdate = document.getElementById("formUpdate");
+
+    formUpdate.addEventListener("submit", async(event) => {
+
+        try{
+
+          event.preventDefault();
+
+        let formData = new FormData(formUpdate);
+
+        if(formData.get("password") != formData.get("replyPassword")){
+          return alert("Nos password no coinciden.");
+        }
+
+
+
+        const myHeaders = new Headers();
+        myHeaders.append("Authorization", `Bearer ${token}`);
+
+        let response = await fetch("/api/v1/skaters", {
+          method: "PUT",
+          headers: myHeaders,
+          body: formData
+        });
+
+        let data = await response.json();
+
+        alert(data.message);
+
+        if(response.status == 201){
+          location.reload();
+        }
+
+
+      }catch(error){
+        alert("Error al intentar actualizar los datos del usuario.");
+      }
+
+    })
+
+
+  </script>
+
+  
